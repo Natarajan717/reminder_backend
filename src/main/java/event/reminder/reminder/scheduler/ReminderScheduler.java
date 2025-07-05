@@ -11,6 +11,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class ReminderScheduler {
     @Scheduled(fixedRate = 60000)
     public void checkReminders() {
         List<EventReminder> upcoming = repository.findByCompletedFalse();
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
 
         for (EventReminder event : upcoming) {
             LocalDateTime eventTime = event.getEventTime();
