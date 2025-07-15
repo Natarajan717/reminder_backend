@@ -12,4 +12,8 @@ public interface EventReminderRepository extends JpaRepository<EventReminder, Lo
     List<EventReminder> findByCompletedTrue();
     List<EventReminder> findByCompletedTrueAndCompletionType(CompletionType type);
     List<EventReminder> findByEventTimeBeforeAndCompletedFalse(LocalDateTime now);
+
+    List<EventReminder> findByAppUserIdAndCompletedFalse(Long id);
+
+    List<EventReminder> findByAppUserIdAndCompletedTrue(Long id);
 }

@@ -2,10 +2,16 @@ package event.reminder.reminder.entity;
 
 import event.reminder.reminder.enums.CompletionType;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class EventReminder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +32,10 @@ public class EventReminder {
     private boolean notified;
     private LocalDateTime lastReminderSent;
 
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private AppUser appUser;
     public Long getId() {
         return id;
     }
@@ -120,6 +130,14 @@ public class EventReminder {
 
     public void setLastReminderSent(LocalDateTime lastReminderSent) {
         this.lastReminderSent = lastReminderSent;
+    }
+
+    public AppUser getAppUser() {
+        return appUser;
+    }
+
+    public void setAppUser(AppUser appUser) {
+        this.appUser = appUser;
     }
 
     @Override

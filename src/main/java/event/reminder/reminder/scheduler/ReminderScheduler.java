@@ -23,6 +23,7 @@ public class ReminderScheduler {
     private final JavaMailSender mailSender;
 
     @Scheduled(fixedRate = 60000)
+
     public void checkReminders() {
         List<EventReminder> upcoming = repository.findByCompletedFalse();
         LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
