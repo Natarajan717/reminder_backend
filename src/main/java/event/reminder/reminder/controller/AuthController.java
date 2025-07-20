@@ -46,6 +46,7 @@ public class AuthController {
         String refreshToken = payload.get("refreshToken");
 
         try {
+
             Claims claims = Jwts.parserBuilder()
                     .setSigningKey(Keys.hmacShaKeyFor(SECRET.getBytes()))
                     .build()
@@ -75,5 +76,7 @@ public class AuthController {
         userRepo.save(user);
         return "User registered successfully";
     }
+
+
 }
 

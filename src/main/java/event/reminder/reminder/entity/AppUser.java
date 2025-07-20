@@ -29,5 +29,8 @@ public class AppUser {
     @JsonIgnore
     @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EventReminder> reminderList;
+
+    private String fcmToken;
+
 }
 
