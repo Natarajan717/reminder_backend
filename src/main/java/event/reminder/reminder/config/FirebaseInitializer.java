@@ -15,7 +15,9 @@ import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
 import java.nio.charset.StandardCharsets;
+
 
 @Component
 public class FirebaseInitializer {
@@ -23,6 +25,7 @@ public class FirebaseInitializer {
     private String firebaseConfig;
 
     @PostConstruct
+
     public void initialize() {
         try {
             if (firebaseConfig == null || firebaseConfig.isBlank()) {
@@ -31,9 +34,15 @@ public class FirebaseInitializer {
 
             InputStream serviceAccount = new ByteArrayInputStream(firebaseConfig.getBytes(StandardCharsets.UTF_8));
 
-            FirebaseOptions options = new FirebaseOptions.Builder()
-                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                    .build();
+
+if (serviceAccount == null) {
+    throw new RuntimeException("Firebase credentials file not found in resources!");
+}
+
+FirebaseOptions options = new FirebaseOptions.Builder()
+        .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+        .build();
+
 
             FirebaseApp.initializeApp(options);
             System.out.println("✅ Firebase initialized successfully");
@@ -42,5 +51,6 @@ public class FirebaseInitializer {
             System.err.println("❌ Firebase initialization failed: " + e.getMessage());
             throw new RuntimeException(e);
         }
+
     }
 }
