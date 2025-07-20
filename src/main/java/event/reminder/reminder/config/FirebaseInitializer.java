@@ -18,17 +18,18 @@ public class FirebaseInitializer {
 
     @PostConstruct
     public void initialize() throws IOException {
-        if (FirebaseApp.getApps().isEmpty()) { // Avoid reinitialization
-            FileInputStream serviceAccount =
-                    new FileInputStream("src/main/resources/event-reminder-74c72-firebase-adminsdk-fbsvc-228a4fb8d3.json");
+       InputStream serviceAccount =
+    getClass().getClassLoader().getResourceAsStream("event-reminder-74c72-firebase-adminsdk-fbsvc-228a4fb8d3.json");
 
-            FirebaseOptions options = new FirebaseOptions.Builder()
-                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                    .build();
+if (serviceAccount == null) {
+    throw new RuntimeException("Firebase credentials file not found in resources!");
+}
 
-            FirebaseApp.initializeApp(options);
-            logger.info("✅ Firebase initialized");
-        }
+FirebaseOptions options = new FirebaseOptions.Builder()
+        .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+        .build();
+
+FirebaseApp.initializeApp(options);
     }
 }
 
