@@ -41,7 +41,7 @@ public class ReminderScheduler {
 
             // 1. First reminder
             if (!event.isNotified() && now.isAfter(firstReminderTime) && now.isBefore(eventTime)) {
-                sendEmail(event, "Upcoming Event Reminder: " + event.getTitle(), "Event at: " + eventTime + "\n" + event.getNote());
+                sendEmail(event, "Upcoming Event Reminder: " + event.getTitle(),  event.getNote());
                 event.setNotified(true);
                 event.setLastReminderSent(now);
                 repository.save(event);
