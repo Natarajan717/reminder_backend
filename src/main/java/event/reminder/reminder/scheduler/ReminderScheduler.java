@@ -1,10 +1,17 @@
 package event.reminder.reminder.scheduler;
 
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
+import event.reminder.reminder.controller.EventReminderController;
 import event.reminder.reminder.entity.EventReminder;
 import event.reminder.reminder.enums.CompletionType;
 import event.reminder.reminder.repository.EventReminderRepository;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -21,7 +28,7 @@ public class ReminderScheduler {
 
     private final EventReminderRepository repository;
     private final JavaMailSender mailSender;
-
+    private static final Logger logger = LoggerFactory.getLogger(ReminderScheduler.class);
     @Scheduled(fixedRate = 60000)
 
     public void checkReminders() {
@@ -64,6 +71,11 @@ public class ReminderScheduler {
 
     private void sendEmail(EventReminder event, String subject, String content) {
         try {
+            //send push notification
+            String fcmToken = event.getAppUser().getFcmToken();
+            sendNotification(fcmToken, subject, content);
+
+            //send email
             var msg = mailSender.createMimeMessage();
             var helper = new MimeMessageHelper(msg, true);
             helper.setTo(event.getEmail());
@@ -74,4 +86,24 @@ public class ReminderScheduler {
             e.printStackTrace();
         }
     }
+
+    public void sendNotification(String token, String title, String body) {
+        Message message = Message.builder()
+                .setToken(token)
+                .setNotification(Notification.builder()
+                        .setTitle(title)
+                        .setBody(body)
+                        .build())
+                .putData("title", title)
+                .putData("body", body)
+                .build();
+
+        try {
+            String response = FirebaseMessaging.getInstance().send(message);
+            logger.info("Sent message: {}", response);
+        } catch (Exception e) {
+            logger.error("Error while sending push notification : {}", e);
+        }
+    }
+
 }
